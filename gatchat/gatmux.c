@@ -186,8 +186,10 @@ static gboolean received_data(GIOChannel *channel, GIOCondition cond,
 	GIOStatus status;
 	gsize bytes_read;
 
-	if (cond & G_IO_NVAL)
+	if (cond & G_IO_NVAL) {
+		mux->read_watch = 0;
 		return FALSE;
+	}
 
 	debug(mux, "received data");
 
@@ -223,14 +225,20 @@ static gboolean received_data(GIOChannel *channel, GIOCondition cond,
 		}
 	}
 
-	if (cond & (G_IO_HUP | G_IO_ERR))
+	if (cond & (G_IO_HUP | G_IO_ERR)) {
+		mux->read_watch = 0;
 		return FALSE;
+	}
 
-	if (status != G_IO_STATUS_NORMAL && status != G_IO_STATUS_AGAIN)
+	if (status != G_IO_STATUS_NORMAL && status != G_IO_STATUS_AGAIN) {
+		mux->read_watch = 0;
 		return FALSE;
+	}
 
-	if (mux->buf_used == sizeof(mux->buf))
+	if (mux->buf_used == sizeof(mux->buf)) {
+		mux->read_watch = 0;
 		return FALSE;
+	}
 
 	return TRUE;
 }
