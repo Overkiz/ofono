@@ -69,6 +69,8 @@ gboolean g_at_mux_set_disconnect_function(GAtMux *mux,
 
 gboolean g_at_mux_set_debug(GAtMux *mux, GAtDebugFunc func, gpointer user_data);
 
+gboolean g_at_mux_set_vendor(GAtMux *mux, unsigned int vendor);
+
 GIOChannel *g_at_mux_create_channel(GAtMux *mux);
 
 /*!

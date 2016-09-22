@@ -35,6 +35,7 @@
 #include "ringbuffer.h"
 #include "gatmux.h"
 #include "gsm0710.h"
+#include "drivers/atmodem/vendor.h"
 
 static const char *cmux_prefix[] = { "+CMUX:", NULL };
 static const char *none_prefix[] = { NULL };
@@ -87,6 +88,7 @@ struct _GAtMux {
 	char buf[MUX_BUFFER_SIZE];		/* Buffer on the main mux */
 	int buf_used;				/* Bytes of buf being used */
 	gboolean shutdown;
+	unsigned int vendor;			/* Specific vendor */
 };
 
 struct mux_setup_data {
@@ -574,6 +576,8 @@ GAtMux *g_at_mux_new(GIOChannel *channel, const GAtMuxDriver *driver)
 	mux->channel = channel;
 	g_io_channel_ref(channel);
 
+	mux->vendor = OFONO_VENDOR_GENERIC;
+
 	g_io_channel_set_close_on_unref(channel, TRUE);
 
 	return mux;
@@ -673,6 +677,16 @@ gboolean g_at_mux_set_debug(GAtMux *mux, GAtDebugFunc func, gpointer user_data)
 
 	mux->debugf = func;
 	mux->debug_data = user_data;
+
+	return TRUE;
+}
+
+gboolean g_at_mux_set_vendor(GAtMux *mux, unsigned int vendor)
+{
+	if (mux == NULL)
+		return FALSE;
+
+	mux->vendor = vendor;
 
 	return TRUE;
 }
@@ -959,6 +973,16 @@ static gboolean gsm0710_packet(GAtMux *mux, int dlc, guint8 control,
 		resp[1] = ((len << 1) | 0x01);
 		memcpy(resp + 2, data, len);
 		write_frame(mux, 0, GSM0710_DATA, resp, len + 2);
+
+		/* In Telit implementation module is NEVER an initiator
+		 * since it is up to controller to send the SABM command to DLCI 0
+		 */
+		if (mux->vendor == OFONO_VENDOR_TELIT) {
+			resp[0] = GSM0710_STATUS_SET;
+			resp[3] = 0x0D;
+			write_frame(mux, 0, GSM0710_DATA, resp, len + 2);
+		}
+
 	}
 
 	return TRUE;
