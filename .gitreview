@@ -1,0 +1,7 @@
+[gerrit]
+host=compile-embedded2.int.overkiz.com
+port=29418
+project=ofono-overkiz
+defaultbranch=master
+defaultremote=origin
+
