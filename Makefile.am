@@ -155,6 +155,11 @@ builtin_sources += drivers/rilmodem/rilmodem.h \
 			drivers/infineonmodem/infineon_constants.h
 endif
 
+if MDEV
+builtin_modules += mdev
+builtin_sources += plugins/mdevng.c
+endif
+
 if ISIMODEM
 builtin_modules += isimodem
 builtin_sources += $(gisi_sources) \
