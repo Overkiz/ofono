@@ -921,6 +921,8 @@ static gboolean set_powered_timeout(gpointer user)
 {
 	struct ofono_modem *modem = user;
 
+	ofono_error("Modem powered timeout.");
+
 	DBG("modem: %p", modem);
 
 	modem->timeout = 0;
@@ -1030,7 +1032,7 @@ static DBusMessage *set_property_lockdown(struct ofono_modem *modem,
 		}
 
 		modem->pending = dbus_message_ref(msg);
-		modem->timeout = g_timeout_add_seconds(20,
+		modem->timeout = g_timeout_add_seconds(40,
 						set_powered_timeout, modem);
 		return NULL;
 	}
@@ -1108,7 +1110,7 @@ static DBusMessage *modem_set_property(DBusConnection *conn,
 				return __ofono_error_failed(msg);
 
 			modem->pending = dbus_message_ref(msg);
-			modem->timeout = g_timeout_add_seconds(20,
+			modem->timeout = g_timeout_add_seconds(40,
 						set_powered_timeout, modem);
 			return NULL;
 		}
