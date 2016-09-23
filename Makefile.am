@@ -156,6 +156,11 @@ builtin_sources += drivers/rilmodem/rilmodem.h \
 			drivers/infineonmodem/infineon_constants.h
 endif
 
+if MDEV
+builtin_modules += mdev
+builtin_sources += plugins/mdevng.c
+endif
+
 if ISIMODEM
 builtin_modules += isimodem
 builtin_sources += $(gisi_sources) \
@@ -480,6 +485,9 @@ builtin_sources += plugins/connman.c
 
 builtin_modules += he910
 builtin_sources += plugins/he910.c
+
+builtin_modules += ge910
+builtin_sources += plugins/ge910.c
 
 builtin_modules += quectel
 builtin_sources += plugins/quectel.c

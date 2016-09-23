@@ -140,6 +140,12 @@ AC_SUBST(UDEV_CFLAGS)
 AC_SUBST(UDEV_LIBS)
 AM_CONDITIONAL(UDEV, test "${enable_udev}" = "yes")
 
+AC_ARG_ENABLE(mdev, AC_HELP_STRING([--enable-mdev],
+				[enable mdev modem detection support]),
+					[enable_mdev=${enableval}])
+AM_CONDITIONAL(MDEV, test "${enable_mdev}" = "yes")
+
+
 AC_ARG_ENABLE(atmodem, AC_HELP_STRING([--disable-atmodem],
 				[disable ETSI AT modem support]),
 					[enable_atmodem=${enableval}])
